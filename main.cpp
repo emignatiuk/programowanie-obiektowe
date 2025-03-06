@@ -1,40 +1,28 @@
 #include <iostream>
 #include <string>
-#include <map>
 
-class string_DNA {
+class string_RNA {
 private:
     std::string sekwencja;
-    std::map<char, int> licznik_nt;
 
 public:
-    string_DNA(const std::string& seq) : sekwencja(seq) {
-        licznik_nt['A'] = 0;
-        licznik_nt['C'] = 0;
-        licznik_nt['G'] = 0;
-        licznik_nt['T'] = 0;
-        countNukleotydy();
-    }
-
-    void countNukleotydy() {
-        for (char nukleotyd : sekwencja) {
-            if (licznik_nt.find(nukleotyd) != licznik_nt.end()) {
-                licznik_nt[nukleotyd]++;
+    string_RNA(const std::string& dna) {
+        sekwencja = dna;
+        for (char& nukleotyd : sekwencja) {
+            if (nukleotyd == 'T') {
+                nukleotyd = 'U'; // Zamiana tyminy (T) na uracyl (U)
             }
         }
     }
 
-    void printLiczniki() const {
-        std::cout << licznik_nt.at('A') << " "
-                  << licznik_nt.at('C') << " "
-                  << licznik_nt.at('G') << " "
-                  << licznik_nt.at('T') << std::endl;
+    void printRNA() const {
+        std::cout << sekwencja << std::endl;
     }
 };
 
 int main() {
     std::string dna = "";
-    string_DNA dnastring(dna);
-    dnastring.printLiczniki();
+    string_RNA rnastring(dna);
+    rnastring.printRNA();
     return 0;
 }
