@@ -1,40 +1,51 @@
 #include <iostream>
-#include <string>
-#include <map>
+#include <vector>
+#include <unordered_map>
+#include <cmath>
+#include <iomanip>
 
-class string_DNA {
+class ProteinProcessor {
 private:
-    std::string sekwencja;
-    std::map<char, int> licznik_nt;
+    std::unordered_map<char, double> massTable;
 
 public:
-    string_DNA(const std::string& seq) : sekwencja(seq) {
-        licznik_nt['A'] = 0;
-        licznik_nt['C'] = 0;
-        licznik_nt['G'] = 0;
-        licznik_nt['T'] = 0;
-        countNukleotydy();
+    ProteinProcessor() {
+        initializeMassTable();
     }
 
-    void countNukleotydy() {
-        for (char nukleotyd : sekwencja) {
-            if (licznik_nt.find(nukleotyd) != licznik_nt.end()) {
-                licznik_nt[nukleotyd]++;
+    void initializeMassTable() {
+        massTable = {
+                {'A', 71.03711}, {'C', 103.00919}, {'D', 115.02694}, {'E', 129.04259},
+                {'F', 147.06841}, {'G', 57.02146}, {'H', 137.05891}, {'I', 113.08406},
+                {'K', 128.09496}, {'L', 113.08406}, {'M', 131.04049}, {'N', 114.04293},
+                {'P', 97.05276},  {'Q', 128.05858}, {'R', 156.10111}, {'S', 87.03203},
+                {'T', 101.04768}, {'V', 99.06841},  {'W', 186.07931}, {'Y', 163.06333}
+        };
+    }
+
+    std::string reconstructProtein(const std::vector<double>& prefixWeights) {
+        std::string białko;
+        for (size_t i = 1; i < prefixWeights.size(); ++i) {
+            double massDiff = prefixWeights[i] - prefixWeights[i - 1];
+            for (const auto& [aminokwas, mass] : massTable) {
+                if (std::fabs(mass - massDiff) < 0.01) {
+                    białko += aminokwas;
+                    break;
+                }
             }
         }
-    }
-
-    void printLiczniki() const {
-        std::cout << licznik_nt.at('A') << " "
-                  << licznik_nt.at('C') << " "
-                  << licznik_nt.at('G') << " "
-                  << licznik_nt.at('T') << std::endl;
+        return białko;
     }
 };
 
 int main() {
-    std::string dna = "";
-    string_DNA dnastring(dna);
-    dnastring.printLiczniki();
+    ProteinProcessor processor;
+    std::vector<double> weights;
+    double weight;
+    while (std::cin >> weight) {
+        weights.push_back(weight);
+    }
+
+    std::cout << processor.reconstructProtein(weights) << std::endl;
     return 0;
 }
