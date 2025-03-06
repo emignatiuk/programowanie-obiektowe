@@ -1,28 +1,34 @@
 #include <iostream>
 #include <string>
+#include <algorithm>
 
-class string_RNA {
+class ReverseComplementDNA {
 private:
     std::string sekwencja;
 
 public:
-    string_RNA(const std::string& dna) {
+    ReverseComplementDNA(const std::string& dna) {
         sekwencja = dna;
+        std::reverse(sekwencja.begin(), sekwencja.end());
         for (char& nukleotyd : sekwencja) {
-            if (nukleotyd == 'T') {
-                nukleotyd = 'U'; // Zamiana tyminy (T) na uracyl (U)
+            switch (nukleotyd) {
+                case 'A': nukleotyd = 'T'; break;
+                case 'T': nukleotyd = 'A'; break;
+                case 'C': nukleotyd = 'G'; break;
+                case 'G': nukleotyd = 'C'; break;
             }
         }
     }
 
-    void printRNA() const {
+    void printReverseComplement() const {
         std::cout << sekwencja << std::endl;
     }
 };
 
 int main() {
-    std::string dna = "";
-    string_RNA rnastring(dna);
-    rnastring.printRNA();
+    std::string dna;
+    std::cin >> dna;
+    ReverseComplementDNA reverseComplement(dna);
+    reverseComplement.printReverseComplement();
     return 0;
 }
