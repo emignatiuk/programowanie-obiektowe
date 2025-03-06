@@ -1,53 +1,41 @@
-
 #include <iostream>
-#include <string>
+#include <vector>
 #include <unordered_map>
+#include <cmath>
+#include <iomanip>
 
-class ProteinTranslation {
+class ProteinProcessor {
 private:
-    std::string rna;
-    std::unordered_map<std::string, char> kodony;
+    std::unordered_map<char, double> massTable;
 
 public:
-    ProteinTranslation(const std::string& sekwencja_RNA) : rna(sekwencja_RNA) {
-        initializeKodony();
+    ProteinProcessor() {
+        initializeMassTable();
     }
 
-    void initializeKodony() {
-        kodony = {
-                {"AUG", 'M'}, {"UUU", 'F'}, {"UUC", 'F'}, {"UUA", 'L'}, {"UUG", 'L'},
-                {"UCU", 'S'}, {"UCC", 'S'}, {"UCA", 'S'}, {"UCG", 'S'},
-                {"UAU", 'Y'}, {"UAC", 'Y'}, {"UAA", '*'}, {"UAG", '*'},
-                {"UGU", 'C'}, {"UGC", 'C'}, {"UGA", '*'}, {"UGG", 'W'},
-                {"CUU", 'L'}, {"CUC", 'L'}, {"CUA", 'L'}, {"CUG", 'L'},
-                {"CCU", 'P'}, {"CCC", 'P'}, {"CCA", 'P'}, {"CCG", 'P'},
-                {"CAU", 'H'}, {"CAC", 'H'}, {"CAA", 'Q'}, {"CAG", 'Q'},
-                {"CGU", 'R'}, {"CGC", 'R'}, {"CGA", 'R'}, {"CGG", 'R'},
-                {"AUU", 'I'}, {"AUC", 'I'}, {"AUA", 'I'}, {"AAG", 'K'}, {"AAA", 'K'},
-                {"ACU", 'T'}, {"ACC", 'T'}, {"ACA", 'T'}, {"ACG", 'T'},
-                {"AGU", 'S'}, {"AGC", 'S'}, {"AGA", 'R'}, {"AGG", 'R'},
-                {"GUU", 'V'}, {"GUC", 'V'}, {"GUA", 'V'}, {"GUG", 'V'},
-                {"GCU", 'A'}, {"GCC", 'A'}, {"GCA", 'A'}, {"GCG", 'A'},
-                {"GAU", 'D'}, {"GAC", 'D'}, {"GAA", 'E'}, {"GAG", 'E'},
-                {"GGU", 'G'}, {"GGC", 'G'}, {"GGA", 'G'}, {"GGG", 'G'}
+    void initializeMassTable() {
+        massTable = {
+                {'A', 71.03711}, {'C', 103.00919}, {'D', 115.02694}, {'E', 129.04259},
+                {'F', 147.06841}, {'G', 57.02146}, {'H', 137.05891}, {'I', 113.08406},
+                {'K', 128.09496}, {'L', 113.08406}, {'M', 131.04049}, {'N', 114.04293},
+                {'P', 97.05276},  {'Q', 128.05858}, {'R', 156.10111}, {'S', 87.03203},
+                {'T', 101.04768}, {'V', 99.06841},  {'W', 186.07931}, {'Y', 163.06333}
         };
     }
 
-    std::string translate() {
-        std::string białko;
-        for (size_t i = 0; i < rna.length(); i += 3) {
-            std::string codon = rna.substr(i, 3);
-            if (kodony[codon] == '*') break;
-            białko += kodony[codon];
+    double calculateWeight(const std::string& białko) {
+        double totalWeight = 0.0;
+        for (char aminokwas : białko) {
+            totalWeight += massTable[aminokwas];
         }
-        return białko;
+        return totalWeight;
     }
 };
 
 int main() {
-    std::string rna;
-    std::cin >> rna;
-    ProteinTranslation translator(rna);
-    std::cout << translator.translate() << std::endl;
+    ProteinProcessor processor;
+    std::string białko;
+    std::cin >> białko;
+    std::cout << std::fixed << std::setprecision(3) << processor.calculateWeight(białko) << std::endl;
     return 0;
 }
